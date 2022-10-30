@@ -41,10 +41,11 @@ optional arguments:
 
 ### Get inventory from remote devices
 Script requires username to get login to devices. Password is specified via cli once the script starts.
-Optionally TCP could be specified, standard 22 used by default.
+Optionally remote TCP port could be specified, standard 22 used by default.
 
 Remote devices could be specified as set of hostname/ip-addresses or file contained hostname/ip-addresses.
 
+Script run with routers specified as set of hostname/ip-addresses:
 ```
 python3 inventory_getter.py routers 10.85.150.69 10.85.150.71  --user root    
 Password: 
@@ -54,14 +55,15 @@ Script run with routers file example:
 python3 inventory_getter.py new_test_inv.db routers_file routers.txt --user root 
 Password:
 ```
-If the routers file is used, the format of router file must be trivial and contain one hostname\ip-address per line
-example:
+If the routers file is used, the format of router file must be trivial and contain one hostname\ip-address per line.
+
+Example:
 ```
 10.85.150.69
 10.85.150.71
 ```
 #### Sample start
-Script throws the following notificcations to stdout during execution reporting its' progress.
+Script throws the following notifications to stdout during execution reporting its' progress.
 ```
 2022_10_26_21_17_13:10.85.150.69_trying_to_connect_to_fetch_data
 2022_10_26_21_17_22:10.85.150.69_conneceted
@@ -104,7 +106,7 @@ Script execution example to get inventory from local files
 python3 inventory_getter.py --database single.db local_files --sw local_dir/qfx5k_sw --hw local_dir/qfx5k_hw --router test_local
 ```
 ### Export SQL database to csv
-Script execution example to get inventory from local files
+Script execution example dump sql database into csv.  Argument `--file` specifies destination file.
 ```
 python3 inventory_getter.py  --database test_inv.db report --file test_report_out.csv
 2022_10_30_16_30_21:building_report
