@@ -1,0 +1,5 @@
+inventory_getter.log
+*.db
+*.csv
+*.ipynb
+*.log
