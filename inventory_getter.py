@@ -175,18 +175,24 @@ class InventoryGetter:
         with open(text_file, 'r') as file:
             return file.read()
 
-    def gather_inventory(self, router_list, username, password, workers=4):
+    def gather_inventory(self, router_list, username, password, port=22, workers=4):
         self.username = username
         self.password = password
+        self.port = port
         if len(router_list) >= workers:
             with Pool(workers) as p:
                 list(p.map(self.ssh_worker, router_list))
         else:
             list(map(self.ssh_worker, router_list))
 
-    def gather_from_routers_file(self, username, password, file, workers=4):
+    def gather_from_routers_file(self, username, password,
+                                 file, port=22, workers=4):
         router_list = self.read_list_from_file(file)
-        self.gather_inventory(router_list, username, password, workers=workers)
+        self.gather_inventory(router_list,
+                              username,
+                              password,
+                              port=port,
+                              workers=workers)
 
     def gather_from_local_xmls(self, router, hw_file, sw_file):
         router_obj = self.router_descriptor(name=router,
@@ -289,6 +295,7 @@ class InventoryGetter:
                                         device_type='juniper_junos',
                                         username=self.username,
                                         password=self.password,
+                                        port=self.port,
                                         global_delay_factor=4) as connect:
                 print('{}:{}_conneceted'.format(self.ttime(), router))
                 sleep(1)
@@ -395,13 +402,15 @@ class InventoryGetter:
 def from_cli(inventory_object, args):
     inventory_object.gather_inventory(router_list=args.routers,
                                       username=args.user,
-                                      password=getpass())
+                                      password=getpass(),
+                                      port=args.port)
 
 
 def from_routers_file(inventory_object, args):
     inventory_object.gather_from_routers_file(file=args.file,
                                               username=args.user,
-                                              password=getpass())
+                                              password=getpass(),
+                                              port=args.port)
 
 
 def from_local_files(inventory_object, args):
@@ -443,6 +452,13 @@ if __name__ == '__main__':
         help='Set username for connection to routers'
     )
     parser_routers.add_argument(
+        '--port',
+        type=int,
+        default=22,
+        required=False,
+        help='Set port to connect to routers'
+    )
+    parser_routers.add_argument(
         dest='routers',
         type=str,
         nargs='+',
@@ -464,6 +480,13 @@ if __name__ == '__main__':
         type=str,
         required=True,
         help='Set username for connection to router'
+    )
+    parser_routers_file.add_argument(
+        '--port',
+        type=int,
+        default=22,
+        required=False,
+        help='Set port to connect to routers'
     )
     parser_routers_file.set_defaults(function=from_routers_file)
     parser_from_directory = subparser.add_parser(

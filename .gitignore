@@ -3,3 +3,4 @@ inventory_getter.log
 *.csv
 *.ipynb
 *.log
+local_dir/
